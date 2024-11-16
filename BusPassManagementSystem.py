@@ -40,6 +40,74 @@ def checkBalance():
     except Exception as e:
         print("Error :",e)
 
+# Method to Reacharge A Pass
+def recharge():
+    try:
+        idd = input("\n\nEnter User ID : ")
+        sql = "SELECT * FROM users WHERE id="+idd
+        cur.execute(sql)
+        result = cur.fetchall()
+        if(len(result)!=0):
+            balance = int(input("Enter Balance : "))
+            sql = "SELECT balance FROM users WHERE id="+idd
+            cur.execute(sql)
+            result = cur.fetchall()
+            for bal in result:
+                balance = int(bal[0])+balance
+            sql = "UPDATE users SET balance="+str(balance)+" WHERE id="+idd
+            cur.execute(sql)
+            conn.commit()
+            print("Pass Recharged Successfully!")
+        else:
+            print("User Not Found!\n")
+    except Exception as e:
+        print("Error :",e)
+
+# Method to Charge A Fare Based on KiloMeters
+def chargeFare():
+    try:
+        idd = input("\n\nEnter User ID : ")
+        sql = "SELECT * FROM users WHERE id="+idd
+        cur.execute(sql)
+        result = cur.fetchall()
+        if(len(result)!=0):
+            for bal in result:
+                print("Name :",bal[1])
+                print("Balance :",bal[2])
+                dis = int(input("\nEnter Distance in KM : "))
+                fare = dis*15
+                print("Your Fare is :",fare)
+                sql = "SELECT balance FROM users WHERE id="+idd
+                cur.execute(sql)
+                result = cur.fetchall()
+                for bal in result:
+                    if(fare<=int(bal[0])):
+                        balance = int(bal[0])-fare
+                        sql = "UPDATE users SET balance="+str(balance)+" WHERE id="+idd
+                        cur.execute(sql)
+                        conn.commit()
+                        print("Fare Has Deducted Successfully!")
+                    else:
+                        print("Insufficient Balance!")
+        else:
+            print("User Not Found!")
+    except Exception as e:
+        print("Error :",e)
+
+# Method to View All Pass Users
+def viewAllPass():
+    try:
+        sql = "SELECT * FROM users"
+        cur.execute(sql)
+        result = cur.fetchall()
+        for u in result:
+            print("ID : ",u[0])
+            print("Name : ",u[1])
+            print("Balance : ",u[2])
+            print("\n*******************\n")
+    except Exception as e:
+        print("Error :",e)
+
 # Dashboard of Bus Pass Management System
 ch = 'a'
 while(True):
@@ -58,5 +126,11 @@ while(True):
         createPass()
     elif(ch=='2'):
         checkBalance()
+    elif(ch=='3'):
+        recharge()
+    elif(ch=='4'):
+        chargeFare()
+    elif(ch=='5'):
+        viewAllPass()
     else:
         print("Wrong Entered! Try Again!")
